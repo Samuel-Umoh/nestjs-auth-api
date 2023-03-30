@@ -1,13 +1,15 @@
 # node-auth-api <br/>
-Simple nodejs authentication api<br/>
-Data generated is stored as an array of objects in a json file<br/>
-The json datastore seemed more efficient to read and write data other than a plain text file<br/>
+Simple nestjs authentication api<br/>
+No datastore is implemented yet, in progress<br/>
+Data generated currently stored in memory and is not persistent<br/>
 
 # API Endpoints and HTTP Methods<br/>
 API expects request body to have certain field(s) which will be used to validate, authorize and authenticate each request to the target endpoint.<br/>
 
 ## POST: '/signup'<br/>
-Creates a new user, will return an error message if validation fails<br/>
+Creates a new user or will return an error message if validation fails<br/>
+User id and roles will be set after success full sign up<br/>
+Password is hashed using `bcrypt`<br/>
 Request body:<br/>
 ```
 {  
@@ -20,7 +22,7 @@ Request body:<br/>
 ```
 
 ## POST: '/login'<br/>
-Generates a `token` for existing user which is used to authenticate and authorize subsequent requests<br/>
+Generates a `token` for an existing user which is used to authenticate and authorize subsequent requests<br/>
 Will return an error message if validation fails or user does not exist<br/>
 Request body:<br/>
 ```
