@@ -1,4 +1,4 @@
-# node-auth-api <br/>
+# nest-auth-api <br/>
 Simple nestjs authentication api<br/>
 No datastore is implemented yet, in progress<br/>
 Data generated currently stored in memory and is not persistent<br/>
