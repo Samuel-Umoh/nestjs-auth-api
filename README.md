@@ -60,7 +60,7 @@ Request `body`:<br/>
 ## GET: '/all_users'<br/>
 Returns all users that have signed up, without their passwords<br/>
 Only accessible to an authenticated admin with role `ADMIN`<br/>
-Request `heade`r:<br/>
+Request `header`:<br/>
 ```
 {  
     "Authorization":"Bearer token"
@@ -72,7 +72,8 @@ Request `heade`r:<br/>
 npm install  
 ```
 
-Then Create .env file add:<br/>
+
+Then create .env file add:<br/>
 ```
 `JWT_SIGN` : jwt secret, 
 `ADMIN_EMAIL` : an admin email, 
