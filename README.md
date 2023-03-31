@@ -1,7 +1,6 @@
 # nest-auth-api <br/>
 Simple nestjs authentication api<br/>
-No datastore is implemented yet, in progress<br/>
-Data generated currently stored in memory and is not persistent<br/>
+Database operations are done using TypeORM and MongoDB driver<br/>
 
 # API Endpoints and HTTP Methods<br/>
 API requires request `body` and/or `header` to have certain field(s) which will be used to validate, authenticate and authorize each request to the target endpoint.<br/>
@@ -75,10 +74,10 @@ npm install
 
 Then Create .env file add:<br/>
 ```
-`JWT_SIGN` : jwt secret, <br/>
-`ADMIN_EMAIL` : an admin email, <br/>
-`MONGO_CONNECTION` : mongodb connection string, <br/>
-`MONGO_DATABASE` : database name <br/>
+`JWT_SIGN` : jwt secret, 
+`ADMIN_EMAIL` : an admin email, 
+`MONGO_CONNECTION` : mongodb connection string, 
+`MONGO_DATABASE` : database name 
 ```
 
 variables and specify values to each.<br/>
