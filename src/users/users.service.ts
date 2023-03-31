@@ -5,46 +5,27 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
+import { InjectRepository } from '@nestjs/typeorm/dist/common';
+import { MongoRepository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
-  constructor(private configService: ConfigService) {}
+  constructor(
+    private configService: ConfigService,
 
-  private users = [
-    {
-      email: 'snow@test.com',
-      password: '$2b$12$bZHKIY/6WWwhZsOPyG/tIeNVgfZNHd1iW06hIk.PTcM0DJZUC9BvG',
-      id: 1680156926245,
-      roles: ['USER'],
-      firstName: 'snow',
-      lastName: 'test',
-      address: 'Uyo',
-    },
-    {
-      email: 'Admin@test.com',
-      password: '$2b$12$NjjXlBrOJJp.TO1SFVjuUOW0jvPfTwZbKGhTkpvqnOLVfLb59FAsO',
-      id: 1680166534261,
-      roles: ['USER'],
-      firstName: 'admin',
-      lastName: 'test',
-      address: 'abuja',
-    },
-    {
-      email: 'admin@dev.com',
-      password: '$2b$12$qgbfftQiMO3pHOcvux/UX.yzlMxzO22VUTLihxmuWcqVV.DnQU1g6',
-      firstName: 'Boma',
-      lastName: 'devop',
-      address: 'Nigeria',
-      id: 1680188659645,
-      roles: ['ADMIN'],
-    },
-  ];
+    @InjectRepository(User)
+    private userRepository: MongoRepository<User>,
+  ) {}
 
   // invoke on a POST /signup route, refrence ninja api
   // hash password
   async create(createUserDto: CreateUserDto) {
-    // check if email | username already exist
-    if (this.users.some((user) => createUserDto.email === user.email)) {
+    // check if email already exist
+    const existingUser = await this.userRepository.findOne({
+      where: { email: createUserDto.email },
+    });
+
+    if (existingUser) {
       throw new HttpException(
         'User already exist, try logging in',
         HttpStatus.CONFLICT,
@@ -63,54 +44,57 @@ export class UsersService {
     const newUser = {
       ...createUserDto,
       password: hashPassword,
-      id: Date.now(),
       roles: [role],
     };
-    console.log(newUser);
-    this.users.push(newUser);
+    await this.userRepository.save(newUser);
+
     return { message: 'Profile created, you can login' };
   }
 
-  findAll() {
-    // map through and return users without passwords
-    //create new users Array without password
-    const usersNoPassword = this.users.map(
-      ({ password, ...otherFields }) => otherFields,
-    );
-    return usersNoPassword;
+  async findAll(): Promise<User[] | null> {
+    // exlude password fields
+    const allUsers = await this.userRepository.find({
+      select: ['_id', 'email', 'firstName', 'lastName', 'address', 'roles'],
+    });
+    return allUsers;
   }
 
-  async findOne(email: string): Promise<User | undefined> {
-    // scope and remove password field from object
-    const user = this.users.find((user) => user.email === email);
-    //create new user object without password
-    const { password, ...userDataNoPassword } = user;
-    return userDataNoPassword;
+  async findOne(email: string): Promise<User | null> {
+    // exlude password field
+    const user = await this.userRepository.findOne({
+      where: { email: email },
+      select: ['_id', 'email', 'firstName', 'lastName', 'address', 'roles'],
+    });
+    return user;
   }
 
   async getFullUser(email: string): Promise<User | undefined> {
-    // scope and remove password field from object
-    const user = this.users.find((user) => user.email === email);
+    const user = await this.userRepository.findOne({
+      where: { email: email },
+    });
     return user;
   }
 
   // req.body only has address
   // use req.user.id find a user and uppdate the address field with req.body.address
-  update(email: string, updateUserDto: UpdateUserDto) {
+  async update(email: string, updateUserDto: UpdateUserDto) {
     if (!updateUserDto.address) {
       throw new HttpException(
         'Only update your address, address should not be empty',
         HttpStatus.BAD_REQUEST,
       );
     }
-    this.users = this.users.map((user) => {
-      if (user.email === email) {
-        return { ...user, address: updateUserDto.address };
-      }
-      return user;
-    });
-    // get address dto spread values,
-    // overwrite address value, in the foundUser
+    // update address field
+    this.userRepository.findOneAndUpdate(
+      { email: email },
+      {
+        $set: {
+          address: updateUserDto.address,
+        },
+      },
+      { upsert: true },
+    );
+
     return this.findOne(email);
   }
 }

@@ -1,11 +1,25 @@
-// import { Role } from '../enum/role.enum';
-// define and import Role[] enum and annotate .roles: Role[]
+import { Entity, Column, ObjectID, ObjectIdColumn } from 'typeorm';
+
+@Entity()
 export class User {
-  id: number;
+  @ObjectIdColumn()
+  _id: ObjectID;
+
+  @Column()
   email: string;
+
+  @Column()
   firstName: string;
+
+  @Column()
   lastName: string;
+
+  @Column()
   address: string;
-  password?: string;
+
+  @Column()
+  password: string;
+
+  @Column()
   roles: string[];
 }
