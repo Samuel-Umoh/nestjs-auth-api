@@ -4,9 +4,12 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UsersService {
+  constructor(private configService: ConfigService) {}
+
   private users = [
     {
       email: 'snow@test.com',
@@ -47,18 +50,15 @@ export class UsersService {
         HttpStatus.CONFLICT,
       );
     }
-    // createUserDto.email != devAdmin@test.com, roles: ['USER']
     const hashPassword = await bcrypt.hash(createUserDto.password, 12);
 
+    // createUserDto.email != devAdmin@test.com, roles: ['USER']
+    const adminEmail = this.configService.get<string>('ADMIN_EMAIL');
     // determine new user role
-    let role: string;
-    switch (createUserDto.email) {
-      case process.env.ADMIN_EMAIL:
-        role = 'ADMIN';
-        break;
-      default:
-        role = 'USER';
-    }
+    // for stricter email comparison, dto.email === adminEmail
+    const role: string = createUserDto.email.includes(adminEmail)
+      ? 'ADMIN'
+      : 'USER';
 
     const newUser = {
       ...createUserDto,
