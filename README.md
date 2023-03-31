@@ -75,10 +75,10 @@ npm install
 
 Then create .env file add:<br/>
 ```
-`JWT_SIGN` : jwt secret, 
-`ADMIN_EMAIL` : an admin email, 
-`MONGO_CONNECTION` : mongodb connection string, 
-`MONGO_DATABASE` : database name 
+JWT_SIGN : jwt secret string, 
+ADMIN_EMAIL : an admin email, 
+MONGO_CONNECTION : a mongodb connection string, 
+MONGO_DATABASE : a database name 
 ```
 
 variables and specify values to each.<br/>
