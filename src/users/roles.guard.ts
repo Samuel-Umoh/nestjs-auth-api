@@ -13,18 +13,13 @@ export class RolesGuard implements CanActivate {
       context.getHandler(),
       context.getClass(),
     ]);
-    // console.log('required roles', requiredRoles);
     // if no role?, request should flow
     if (!requiredRoles) {
       return true;
     }
-    // get the user from the quest
-    // annotate user type? :User
+    // get the user from the request
     const { user } = context.switchToHttp().getRequest();
-    // console.log('Request.user rolesGuard', user.roles);
-    // if (!user) {
-    //   return true;
-    // }
+    // if (!user) i.e unAuthenticated request
     return requiredRoles.some((role) => user.roles?.includes(role));
   }
 }

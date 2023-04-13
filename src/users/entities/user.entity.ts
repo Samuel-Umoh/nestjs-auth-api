@@ -17,6 +17,7 @@ export class User {
   @Column()
   address: string;
 
+  // {select?} option not working check typeorm github issues
   @Column()
   password: string;
 

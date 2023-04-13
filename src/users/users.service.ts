@@ -17,8 +17,6 @@ export class UsersService {
     private userRepository: MongoRepository<User>,
   ) {}
 
-  // invoke on a POST /signup route, refrence ninja api
-  // hash password
   async create(createUserDto: CreateUserDto) {
     // check if email already exist
     const existingUser = await this.userRepository.findOne({
@@ -33,10 +31,7 @@ export class UsersService {
     }
     const hashPassword = await bcrypt.hash(createUserDto.password, 12);
 
-    // createUserDto.email != devAdmin@test.com, roles: ['USER']
     const adminEmail = this.configService.get<string>('ADMIN_EMAIL');
-    // determine new user role
-    // for stricter email comparison, dto.email === adminEmail
     const role: string = createUserDto.email.includes(adminEmail)
       ? 'ADMIN'
       : 'USER';
@@ -68,6 +63,7 @@ export class UsersService {
     return user;
   }
 
+  // full user with password
   async getFullUser(email: string): Promise<User | undefined> {
     const user = await this.userRepository.findOne({
       where: { email: email },
@@ -75,8 +71,7 @@ export class UsersService {
     return user;
   }
 
-  // req.body only has address
-  // use req.user.id find a user and uppdate the address field with req.body.address
+  // req.body should only have address
   async update(email: string, updateUserDto: UpdateUserDto) {
     if (!updateUserDto.address) {
       throw new HttpException(

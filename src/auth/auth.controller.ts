@@ -10,7 +10,6 @@ import { AuthService } from './auth.service';
 import { LoginUserDto } from 'src/users/dto/login-user.dto';
 import { Public } from 'src/auth/decorators/public.decorators';
 
-// can add 'auth' to controller
 @Controller()
 export class AuthController {
   constructor(private authService: AuthService) {}

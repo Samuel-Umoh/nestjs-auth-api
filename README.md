@@ -7,7 +7,7 @@ API requires request `body` and/or `header` to have certain field(s) which will 
 
 ## POST: '/signup'<br/>
 Creates a new user or will return an error message if validation fails<br/>
-User id and roles will be set after success full sign up<br/>
+User id and roles will be set after successfull sign up<br/>
 Password is hashed using `bcrypt`<br/>
 Request `body`:<br/>
 ```

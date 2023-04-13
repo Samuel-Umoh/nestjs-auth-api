@@ -12,13 +12,12 @@ export class AuthService {
     private configService: ConfigService,
   ) {}
 
-  // Invoke from a controller, POST  / login
   async signIn(email: string, pass: string): Promise<any> {
     const user = await this.usersService.getFullUser(email);
     if (!user) {
       return { message: 'User does not exist' };
     }
-    // user bcrypt.compare
+
     const isMatch = await bcrypt.compare(pass, user.password);
     if (!isMatch) {
       throw new UnauthorizedException('Password does not match');
@@ -28,8 +27,7 @@ export class AuthService {
       sub: user._id,
       roles: user.roles[0],
     };
-    // console.log('Payload username authServices', payload.username);
-    // console.log('Payload roles authServices', payload.roles);
+
     const jwtSign = this.configService.get<string>('JWT_SIGN');
 
     return {

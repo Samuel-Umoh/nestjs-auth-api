@@ -27,7 +27,6 @@ export class UsersController {
   @Get('hello')
   @Roles(Role.User)
   getProfile(@Request() req) {
-    // forward req.user.email|roles to service as arg
     return this.usersService.findOne(req.user.email);
   }
 
